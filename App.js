@@ -15,7 +15,8 @@ class App extends Component {
 	constructor(props) {
 	  super(props)
 	  this.state = {
-	    visible: false
+	    visible: false,
+	    perc: 0
 	  }
 		this.size = 200;
 		this.fill = 100;
@@ -25,9 +26,24 @@ class App extends Component {
 		this.textWidth = this.size - (this.textOffset*2);
 		this.textHeight = this.size*(1 - this.cropDegree/360) - (this.textOffset*2);
 		this.onPress = this.onPress.bind(this)
+		this.doSleep = this.doSleep.bind(this)
+		this.start = this.start.bind(this)
 	}
 	onPress() {
 		this.setState({visible: !this.state.visible})
+	}
+	sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+  doSleep(ms, callback) {
+    this.sleep(ms).then(callback())
+  }
+	async start() {
+		let i = 1
+		while (i++<100) {
+			await this.sleep(10)
+			this.setState({perc: i})
+		}
 	}
 	render() {
 		const animation =
@@ -56,15 +72,19 @@ class App extends Component {
 	     </View>
 	   </GaugeProgress>
 
+//        bgColor="#8acf89">
+		const redColor=255-2.5*this.state.perc
+		const greenColor=2.5*this.state.perc
+		let bgColor = "rgb("+redColor+","+greenColor+",0)"
 		const progressCircle =
 			<ProgressCircle
-        percent={30}
+        percent={this.state.perc}
         radius={50}
         borderWidth={8}
         color="#3399FF"
         shadowColor="#999"
-        bgColor="#8acf89">
-        <Text style={{ fontSize: 18 }}>{'30%'}</Text>
+        bgColor={bgColor}>
+        <Text style={{ fontSize: 18 }}>{this.state.perc + "%"}</Text>
       </ProgressCircle>
 
 		return (
@@ -72,6 +92,8 @@ class App extends Component {
 			 {progressCircle}
 			 {gauge}
 			 {animation}
+			 <Button title="Start" onPress={this.start}/>
+			 <Text/>
 			 <Button title="Refresh" onPress={this.onPress}/>
 			</View>)
 	}
