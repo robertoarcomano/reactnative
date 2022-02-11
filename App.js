@@ -9,6 +9,7 @@
 import React, {Component} from 'react';
 import {Button, View, Text} from 'react-native';
 import { AnimatedGaugeProgress, GaugeProgress } from 'react-native-simple-gauge';
+import ProgressCircle from 'react-native-progress-circle'
 
 class App extends Component {
 	constructor(props) {
@@ -55,8 +56,20 @@ class App extends Component {
 	     </View>
 	   </GaugeProgress>
 
+		const progressCircle =
+			<ProgressCircle
+        percent={30}
+        radius={50}
+        borderWidth={8}
+        color="#3399FF"
+        shadowColor="#999"
+        bgColor="#fff">
+        <Text style={{ fontSize: 18 }}>{'30%'}</Text>
+      </ProgressCircle>
+
 		return (
 			<View>
+			 {progressCircle}
 			 {gauge}
 			 {animation}
 			 <Button title="Refresh" onPress={this.onPress}/>
