@@ -63,7 +63,7 @@ class App extends Component {
         borderWidth={8}
         color="#3399FF"
         shadowColor="#999"
-        bgColor="#fff">
+        bgColor="#8acf89">
         <Text style={{ fontSize: 18 }}>{'30%'}</Text>
       </ProgressCircle>
 
