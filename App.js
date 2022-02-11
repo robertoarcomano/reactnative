@@ -60,8 +60,26 @@ const App: () => Node = () => {
   const backgroundStyle = {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
   };
+	const size = 200;
+	const fill = 100;
+	const width = 15;
+	const cropDegree = 90;
+	const textOffset = width;
+	const textWidth = size - (textOffset*2);
+	const textHeight = size*(1 - cropDegree/360) - (textOffset*2);
 
-	return <AnimatedGaugeProgress
+	return (
+		<View>
+		 <GaugeProgress
+       size={size}
+       width={width}
+       fill={fill}
+       cropDegree={cropDegree}>
+       <View style={styles.textView}>
+         <Text style={styles.text}>hello</Text>
+       </View>
+     </GaugeProgress>
+		 <AnimatedGaugeProgress
            size={200}
            width={15}
            fill={100}
@@ -72,8 +90,7 @@ const App: () => Node = () => {
            backgroundColor="#b0c4de"
            stroke={[2, 2]} //For a equaly dashed line
            strokeCap="circle" />
-
-	return <View><Text>ok</Text></View>
+		</View>)
 
   return (
     <SafeAreaView style={backgroundStyle}>
