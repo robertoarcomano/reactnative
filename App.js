@@ -1,5 +1,5 @@
-import React, { useRef, useState } from "react";
-import { Button, DrawerLayoutAndroid, Text, StyleSheet, View } from "react-native";
+import React, { Component, useRef } from "react";
+import { Button, DrawerLayoutAndroid, Text, StyleSheet, View, Modal, Pressable } from "react-native";
 import { AnimatedGaugeProgress, GaugeProgress } from 'react-native-simple-gauge';
 import ProgressCircle from 'react-native-progress-circle'
 
@@ -30,7 +30,7 @@ const gauge =
 
 const animation =
 	<AnimatedGaugeProgress
-	 size={100}
+	 size={50}
 	 width={10}
 	 fill={100}
 	 rotation={90}
@@ -56,57 +56,73 @@ const start =
 const onPress =
 	() => null
 
-const App = () => {
-  const drawer = useRef(null);
-  const [drawerPosition, setDrawerPosition] = useState("left");
-  const changeDrawerPosition = () => {
-    if (drawerPosition === "left") {
-      setDrawerPosition("right");
-    } else {
-      setDrawerPosition("left");
-    }
-  };
-
-  const navigationView = () => (
-    <View style={[styles.container, styles.navigationContainer]}>
-      <Text style={styles.paragraph}>I'm in the Drawer!</Text>
-      <Button
-        title="Close drawer"
-        onPress={() => drawer.current.closeDrawer()}
-      />
-    </View>
-  );
-
-  return (
-		<DrawerLayoutAndroid
-			ref={drawer}
-			drawerWidth={300}
-			drawerPosition={drawerPosition}
-			renderNavigationView={navigationView}>
-			<View style={styles.container}>
-				{progressCircle(90,"#8acf89")}
-				{gauge({size: 100, fill: 100, width: 10, cropDegree: 90})}
-				{animation}
-				<Button title="Start" onPress={start}/>
-				<Text/>
-				<Button title="Refresh" onPress={onPress}/>
-				<Text style={styles.paragraph}>
-				  Drawer on the {drawerPosition}!
-				</Text>
-				<Button title="Change Drawer Position" onPress={() => changeDrawerPosition()}/>
-				<Text style={styles.paragraph}>
-					Swipe from the side or press button below to see it!
-				</Text>
-				<Button title="Open drawer" onPress={() => drawer.current.openDrawer()}/>
-			</View>
-		</DrawerLayoutAndroid>
-  );
+export class App extends Component {
+	constructor(props) {
+		super(props)
+    this.setDrawer = this.setDrawer.bind(this)
+    this.navigationView = this.navigationView.bind(this)
+	  this.drawer = null;
+	  this.state = {
+			modalVisible: false
+	  }
+	}
+  setDrawer(drawer) {
+    this.drawer = drawer
+  }
+	navigationView =
+		() =>
+	    <View style={[styles.container, styles.navigationContainer]}>
+	      <Text style={styles.paragraph}>I'm in the Drawer!</Text>
+	      <Button
+	        title="Close drawer"
+	        onPress={() => this.drawer.closeDrawer()}
+	      />
+	    </View>
+	setModalVisible =
+		newValue =>
+			this.setState({modalVisible: newValue})
+  render() {
+    return (
+      <View style={styles.container}>
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={this.state.modalVisible}
+          onRequestClose={() => {
+            Alert.alert("Modal has been closed.");
+            this.setModalVisible(!this.state.modalVisible);
+          }}>
+          <View style={{backgroundColor: "lightgray", width: 200, height: 200, alignSelf: "center"}}>
+	          <Text>Hello World!</Text>
+            <Button title="Hide Modal" onPress={() => this.setModalVisible(!this.state.modalVisible)}/>
+          </View>
+        </Modal>
+        <Button title="Show Modal" onPress={() => this.setModalVisible(true)}/>
+	      <Button title="Open drawer" onPress={() => this.drawer.openDrawer()}/>
+        <DrawerLayoutAndroid
+          style={[styles.container, styles.navigationContainer]}
+          ref={this.setDrawer}
+          drawerWidth={300}
+          drawerPosition={"left"}
+          renderNavigationView={this.navigationView}>
+	          {progressCircle(90,"#8acf89")}
+	          <Text/>
+	          {gauge({size: 50, fill: 100, width: 10, cropDegree: 90})}
+	          {animation}
+	          <Button title="Start" onPress={start}/>
+	          <Text/>
+	          <Button title="Refresh" onPress={onPress}/>
+				</DrawerLayoutAndroid>
+      </View>
+    )
+  }
 };
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     alignItems: "center",
+    width: "100%",
+    height: "100%",
     justifyContent: "center",
     padding: 16
   },
